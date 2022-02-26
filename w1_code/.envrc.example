@@ -1,0 +1,5 @@
+# Used to deploy to testnets
+export HDWALLET_MNEMONIC=''
+
+# Used to deploy to testnets
+export INFURA_API_KEY=''
