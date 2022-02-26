@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Counter {
-    uint public _counter;
+    uint public counter;
 
     constructor() {
         counter = 0;
@@ -13,7 +13,7 @@ contract Counter {
         counter = counter + 1;
     }
 
-    function setCount(int _counter) public {
+    function setCounter(uint _counter) public {
         console.log("Changing counter from '%s' to '%s'", counter, _counter);
         counter = _counter;
     }
