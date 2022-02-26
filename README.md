@@ -1,7 +1,7 @@
 # blockchain-learn
 区块链集训营作业
 
-## [W1-1作业]()：
+## [W1-1作业](https://github.com/leoliew/blockchain-learn/tree/main/w1-1)：
 * 安装 Metamask、并创建好账号
 * 执行一次转账
 * 使用 Remix 创建任意一个合约
