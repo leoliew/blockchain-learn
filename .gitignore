@@ -109,3 +109,8 @@ dist
 # truffle secret
 .secret
 .envrc
+
+#Hardhat files
+typechain
+cache
+artifacts
