@@ -20,7 +20,7 @@ npx hardhat help
 - 合约编译
   - `npx hardhat compile`
 - 合约发布到本地
-  - 方法一
+  - 方法一，使用hardhat自带的deploy的功能
     - `npx hardhat run scripts/deploy.js --network localhost`
   - 方法二 ,使用hardhat-deploy插件管理 
     - `npx hardhat deploy --network localhost`
@@ -34,3 +34,9 @@ npx hardhat help
 ## 调试方法
 - 进入命令行调试
   - `npx hardhat console --network localhost `
+- fork主网/测试网进行调试
+  - `npx hardhat node --fork https://rinkeby.infura.io/v3/<key>`
+
+## 验证合约
+- 复制`.envrc.example`文件到根目录下`.envrc`，替换成自己的测试环境配置
+- 

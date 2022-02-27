@@ -26,6 +26,13 @@ module.exports = {
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337
+    },
+    rinkeby: {
+      chainId: 4,
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_API_KEY}`,
+      accounts: {
+        mnemonic: process.env.HDWALLET_MNEMONIC
+      }
     }
   }
 };
