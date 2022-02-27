@@ -46,3 +46,7 @@ npx hardhat help
     - `npx hardhat verify address --network xxx`
   - 方法二：使用扁平化导出验证
     - `npx hardhat flatten contracts/Counter.sol >> Counter.sol`
+
+### 部署结果
+- [交易流水](https://rinkeby.etherscan.io/tx/0x56142797466f339b514d14fe47094fa47fdc46696248afa82039542121f26272)
+- [合约地址](https://rinkeby.etherscan.io/address/0x6796da26e81106d73ba420ff4a69dc559f96740b#code)
