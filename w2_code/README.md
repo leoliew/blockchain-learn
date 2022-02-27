@@ -39,4 +39,10 @@ npx hardhat help
 
 ## 验证合约
 - 复制`.envrc.example`文件到根目录下`.envrc`，替换成自己的测试环境配置
-- 
+- 发布合约到测试网
+  - `npx hardhat deploy --network rinkeby`
+- 验证测试网合约
+  - 方法一：使用命令行验证（国内网络大概率连不上）
+    - `npx hardhat verify address --network xxx`
+  - 方法二：使用扁平化导出验证
+    - `npx hardhat flatten contracts/Counter.sol >> Counter.sol`

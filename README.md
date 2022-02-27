@@ -9,7 +9,7 @@
 * 使用 Truffle 部署 Counter 合约 到 test 网络（goerli）（提交交易 hash）
 * 编写一个测试用例
 
-## W1-2作业：
+## [W1-2作业](https://github.com/leoliew/blockchain-learn/tree/main/w2_code)：
 * 使用Hardhat部署修改后的Counter
 * 使用Hardhat测试Counter
 * 写一个脚本调用count()
