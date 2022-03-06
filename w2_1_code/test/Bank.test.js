@@ -21,6 +21,8 @@ describe('Bank', function () {
     const balanceOfSigner2 = await bank.balanceOf(wallet2.address)
     // 转账后余额正确
     expect(balanceOfSigner2).to.equal(toWei('1'))
+    expect(await bank.isIncluded(wallet2.address)).to.equal(true)
+    expect(await bank.included(0)).to.equal(wallet2.address)
   })
 
   it('should not be withdraw by other address', async function () {
@@ -34,5 +36,8 @@ describe('Bank', function () {
     const walletBalance = await provider.getBalance(wallet.address)
     // 提现后金额大于10000
     expect(walletBalance).to.above(toWei('10000'))
+    // 记录的余额清空
+    expect(await bank.balanceOf(wallet2.address)).to.equal(0)
+    expect(await bank.isIncluded(wallet2.address)).not.to.equal(true)
   })
 })
