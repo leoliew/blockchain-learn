@@ -28,7 +28,7 @@ contract Score {
         studentScore[_student] = _score;
     }
 
-    // 修改老师
+    // 设置老师地址
     function setTeacher(address _teacher) external onlyOwner {
         teacher = _teacher;
     }
