@@ -6,8 +6,8 @@ import "hardhat/console.sol";
 contract Bank {
     mapping(address => uint) public balanceOf;
     // 用于标记余额存储的情况
-    mapping(address => bool) public isIncluded;
-    address[] public included;
+    mapping(address => bool) private isIncluded;
+    address[] private included;
     // 设定可提取的owner,目前设置为合约owner
     address public owner;
 
