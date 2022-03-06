@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 
 contract Bank {
     mapping(address => uint) public balanceOf;
+    // 设定可提取的owner,目前设置为合约owner
     address public owner;
 
     constructor() {
@@ -25,6 +26,6 @@ contract Bank {
     // 提取金额
     function withdraw() public onlyOwner {
         require(address(this).balance > 0);
-        msg.sender.transfer(address(this).balance);
+        payable(msg.sender).transfer(address(this).balance);
     }
 }

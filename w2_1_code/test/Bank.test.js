@@ -1,27 +1,38 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const hre = require('hardhat')
+const toWei = ethers.utils.parseEther
 
 describe('Bank', function () {
-  it('Should send and withdraw', async function () {
-    const [signer1, signer2] = await hre.ethers.getSigners()
+
+  let wallet, wallet2
+  let provider
+  let bank
+
+  beforeEach(async () => {
+    [wallet, wallet2] = await hre.ethers.getSigners()
+    provider = hre.ethers.provider
     const Bank = await ethers.getContractFactory('Bank')
-    const bank = await Bank.deploy('Hello, world!')
-    await bank.deployed()
+    bank = await Bank.deploy()
+  })
 
-    // expect(await bank.greet()).to.equal("Hello, world!");
+  it('should send and record balance', async function () {
+    await wallet2.sendTransaction({ to: bank.address, value: ethers.utils.parseEther('1.0') })
+    const balanceOfSigner2 = await bank.balanceOf(wallet2.address)
+    // 转账后余额正确
+    expect(balanceOfSigner2).to.equal(toWei('1'))
+  })
 
-    await signer2.sendTransaction({ to: bank.address, value: ethers.utils.parseEther('1.0') })
+  it('should not be withdraw by other address', async function () {
+    await expect(bank.connect(wallet2).withdraw()).to.be.revertedWith('Not owner')
+  })
 
-    const balanceOfSigner2 = await bank.balanceOf(signer2.address)
-
-    console.log(balanceOfSigner2)
-
-    // const setGreetingTx = await bank.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    // await setGreetingTx.wait();
-
-    // expect(await bank.greet()).to.equal("Hola, mundo!");
+  it('should be withdraw all balance', async function () {
+    const sendValue = 3
+    await wallet2.sendTransaction({ to: bank.address, value: ethers.utils.parseEther(sendValue.toString()) })
+    const withdrawTx = await bank.withdraw()
+    const walletBalance = await provider.getBalance(wallet.address)
+    // 提现后金额大于10000
+    expect(walletBalance).to.above(toWei('10000'))
   })
 })
