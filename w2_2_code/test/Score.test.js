@@ -31,4 +31,9 @@ describe('Score', function () {
   it('score must be below 100', async function () {
     await expect(score.setScore(wallet3.address, 101)).to.be.revertedWith('Score: INVALID_SCORE')
   })
+
+  it('score must be set correct', async function () {
+    await score.setScore(wallet3.address, 98)
+    expect(await score.studentScore(wallet3.address)).to.be.equal(98)
+  })
 })
