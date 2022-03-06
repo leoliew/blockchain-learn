@@ -16,7 +16,7 @@ contract Bank {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
+        require(msg.sender == owner, "Bank: NOT_OWNER");
         _;
     }
 

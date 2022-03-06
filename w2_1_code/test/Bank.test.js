@@ -24,7 +24,7 @@ describe('Bank', function () {
   })
 
   it('should not be withdraw by other address', async function () {
-    await expect(bank.connect(wallet2).withdraw()).to.be.revertedWith('Not owner')
+    await expect(bank.connect(wallet2).withdraw()).to.be.revertedWith('Bank: NOT_OWNER')
   })
 
   it('should be withdraw all balance', async function () {

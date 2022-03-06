@@ -13,3 +13,8 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+## 相关代码
+- [Score合约代码](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/contracts/Score.sol)
+- [Teacher合约代码](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/contracts/Teacher.sol)
+- [总体单元测试](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/test/Score.test.js)

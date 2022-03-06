@@ -2,21 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
+import "./interfaces/IScore.sol";
 
-contract Greeter {
-    string private greeting;
+contract Teacher {
+    IScore public score;
 
-    constructor(string memory _greeting) {
-        console.log("Deploying a Greeter with greeting:", _greeting);
-        greeting = _greeting;
+    constructor(IScore _score) {
+        score = _score;
     }
 
-    function greet() public view returns (string memory) {
-        return greeting;
-    }
-
-    function setGreeting(string memory _greeting) public {
-        console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
-        greeting = _greeting;
+    function setScore(address _student, uint _score) external {
+        score.setScore(_student, _score);
     }
 }

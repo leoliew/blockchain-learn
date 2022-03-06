@@ -4,23 +4,32 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract Score {
-    mapping(address => uint) public score;
-//    string private greeting;
-//
-//    constructor(string memory _greeting) {
-//        console.log("Deploying a Greeter with greeting:", _greeting);
-//        greeting = _greeting;
-//    }
-//
-//    function greet() public view returns (string memory) {
-//        return greeting;
-//    }
-//
-//    function setGreeting(string memory _greeting) public {
-//        console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
-//        greeting = _greeting;
-//    }
-    function setScore(address student,uint score) public{
+    mapping(address => uint) public studentScore;
+    address public teacher;
+    address public owner;
 
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Score: NOT_OWNER");
+        _;
+    }
+
+    modifier onlyTeacher() {
+        require(msg.sender == teacher, "Score: NOT_TEACHER");
+        _;
+    }
+
+    // 修改学生分数
+    function setScore(address _student, uint _score) external onlyTeacher {
+        require(_score <= 100,"Score: INVALID_SCORE");
+        studentScore[_student] = _score;
+    }
+
+    // 修改老师
+    function setTeacher(address _teacher) external onlyOwner {
+        teacher = _teacher;
     }
 }
