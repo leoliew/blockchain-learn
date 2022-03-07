@@ -20,7 +20,7 @@ describe('Score', function () {
     score = await Score.deploy()
     teacher = await Teacher.deploy(score.address)
 
-    // 设置wallet1为teacher
+    // 设置teacher合约
     await score.setTeacher(teacher.address)
   })
 
