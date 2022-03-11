@@ -31,14 +31,19 @@ contract Bank {
 
 
     // 提取金额
-    function withdraw() public onlyOwner {
+    function withdraw() onlyOwner public returns (bool) {
         require(address(this).balance > 0);
-        payable(msg.sender).transfer(address(this).balance);
+        //        payable(msg.sender).transfer(address(this).balance);
+        //        safe transfer,忽略2300gas限制
+        (bool success,) = msg.sender.call{value : address(this).balance}("");
         // 清除所有余额
-        for (uint256 i = 0; i < included.length; i++) {
-            isIncluded[included[i]] = false;
-            balanceOf[included[i]] = 0;
+        if(success){
+            for (uint256 i = 0; i < included.length; i++) {
+                isIncluded[included[i]] = false;
+                balanceOf[included[i]] = 0;
+            }
+            delete included;
         }
-        delete included;
+        return success;
     }
 }
