@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract MyERC20 is ERC20 {
 
-    address public owner = msg.sender;
+    address public owner;
 
     constructor(uint256 initialSupply) ERC20("MyERC20", "MERC") {
         owner = msg.sender;
