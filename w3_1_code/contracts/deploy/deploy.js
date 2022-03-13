@@ -12,6 +12,13 @@ module.exports = async (hardhat) => {
     from: signer1.address,
     skipIfAlreadyDeployed: false
   })
-
   console.log('MyERC20 deployed to:', myERC20.address)
+
+  const vault = await deploy('Vault', {
+    args: [myERC20.address],
+    from: signer1.address,
+    skipIfAlreadyDeployed: false
+  })
+
+  console.log('Vault deployed to:', vault.address)
 }
