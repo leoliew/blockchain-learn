@@ -15,6 +15,18 @@ npx hardhat help
 ```
 
 ## 相关代码
-- [Score合约代码](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/contracts/Score.sol)
-- [Teacher合约代码](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/contracts/Teacher.sol)
-- [总体单元测试](https://github.com/leoliew/blockchain-learn/blob/main/w2_2_code/test/Score.test.js)
+- [发行一个ERC20]()
+- [可动态增发]()
+- [调用合约进行转账]()
+
+## 相关截图
+### ERC20
+- 发行一个ERC20
+![image1](../../images/w3_1_1.png)
+- 可动态增发
+![image1](../../images/w3_1_2.png)
+- 调用合约进行转账
+![image1](../../images/w3_1_3.png)
+
+
+### Vault
