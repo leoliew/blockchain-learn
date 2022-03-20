@@ -16,6 +16,7 @@ async function main () {
   await myTokenMarket.buyToken('0', { value: buyEthAmount })
 
   let afterBalance = await aToken.balanceOf(wallet1.address)
+  console.log('===购买AToken===')
   console.log(`用户用${ethAmount}eth 购买到: ${ethers.utils.formatUnits(afterBalance.sub(beforeBalance), 18)} AToken`)
 
 }

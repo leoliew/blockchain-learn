@@ -13,7 +13,7 @@ module.exports = async (hardhat) => {
 
   const [signer1] = await hardhat.ethers.getSigners()
 
-  let aTokenInitialSupply = ethers.utils.parseUnits('1000', 18)
+  let aTokenInitialSupply = ethers.utils.parseUnits('10000', 18)
   let aToken = await deploy('AToken', {
     contract: 'Token',
     args: ['AToken', 'AToken', aTokenInitialSupply],
@@ -22,7 +22,7 @@ module.exports = async (hardhat) => {
   })
   console.log('AToken:' + aToken.address)
 
-  let bTokenInitialSupply = ethers.utils.parseUnits('2000', 18)
+  let bTokenInitialSupply = ethers.utils.parseUnits('20000', 18)
   let bToken = await deploy('BToken', {
     contract: 'Token',
     args: ['BToken', 'BToken', bTokenInitialSupply],
