@@ -1,9 +1,7 @@
 
 ## 相关代码
-- [MyTokenMarket](https://github.com/leoliew/blockchain-learn/blob/main/w4_1_code/contracts/MyTokenMarket.sol)
+- [buyTokenAnkStake](https://github.com/leoliew/blockchain-learn/blob/main/w4_1_code/scripts/buyTokenAnkStake.js)
 
 ## 截图
-- addLiquidity
-
-
-- buyToken
+- buyTokenAndStake
+  ![image2](../images/w4_2_1.png)
