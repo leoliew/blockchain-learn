@@ -26,5 +26,7 @@ interface IMasterChef {
 
     function withdraw(uint256 pid, uint256 amount) external;
 
+    function emergencyWithdraw(uint256 pid) external;
+
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) external;
 }

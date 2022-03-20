@@ -16,6 +16,8 @@ contract MyTokenMarket {
     address public wETH;
     address public masterChef;
 
+    mapping(address => uint256) public stakeAmounts;
+
     // 构造方法
     constructor(address _token, address _router, address _masterChef, address _wETH) {
         myToken = _token;
@@ -48,15 +50,19 @@ contract MyTokenMarket {
         path[1] = myToken;
         IUniswapV2Router01(router).swapExactETHForTokens{value : msg.value}(minTokenAmount, path, address(this), block.timestamp);
         uint256 aTokenAmount = IERC20(myToken).balanceOf(address(this));
-
         console.log("balance Of:", aTokenAmount);
-
         IERC20(myToken).safeApprove(masterChef, aTokenAmount);
-        IMasterChef(masterChef).deposit(_pid, aTokenAmount);
+//        IMasterChef(masterChef).deposit(_pid, aTokenAmount);
+        IMasterChef(masterChef).deposit(0, aTokenAmount);
+        stakeAmounts[msg.sender] += aTokenAmount;
     }
 
     // 提现
-    function withdraw(uint256 _pid, uint256 amount) public {
-        IMasterChef(masterChef).withdraw(_pid, amount);
+    function withdraw(uint256 _pid) public {
+        uint256 amountToken = stakeAmounts[msg.sender];
+//        IMasterChef(masterChef).withdraw(_pid, amountToken);
+        IMasterChef(masterChef).withdraw(0, amountToken);
+        IERC20(myToken).safeTransfer(msg.sender, amountToken);
+        stakeAmounts[msg.sender] = 0;
     }
 }
