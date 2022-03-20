@@ -9,6 +9,7 @@ module.exports = async (hardhat) => {
   const { deploy } = deployments
   // 设置外部合约地址
   let routerAddress = '0x0165878A594ca255338adfa4d48449f69242Eb8F'
+  let masterChefAddress = '0x51A1ceB83B83F1985a81C295d1fF28Afef186E02'
   let wETHAddress = '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707'
 
   const [signer1] = await hardhat.ethers.getSigners()
@@ -32,7 +33,7 @@ module.exports = async (hardhat) => {
   console.log('BToken:' + bToken.address)
 
   let myTokenMarket = await deploy('MyTokenMarket', {
-    args: [aToken.address, routerAddress, wETHAddress],
+    args: [aToken.address, routerAddress, masterChefAddress, wETHAddress],
     from: signer1.address,
     skipIfAlreadyDeployed: false
   })

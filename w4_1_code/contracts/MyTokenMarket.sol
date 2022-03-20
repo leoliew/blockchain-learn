@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol";
+import "./interfaces/IMasterChef.sol";
+import "hardhat/console.sol";
 
 contract MyTokenMarket {
 
@@ -12,11 +14,13 @@ contract MyTokenMarket {
     address public myToken;
     address public router;
     address public wETH;
+    address public masterChef;
 
     // 构造方法
-    constructor(address _token, address _router, address _wETH) {
+    constructor(address _token, address _router, address _masterChef, address _wETH) {
         myToken = _token;
         router = _router;
+        masterChef = _masterChef;
         wETH = _wETH;
     }
 
@@ -35,5 +39,24 @@ contract MyTokenMarket {
         path[0] = wETH;
         path[1] = myToken;
         IUniswapV2Router01(router).swapExactETHForTokens{value : msg.value}(minTokenAmount, path, msg.sender, block.timestamp);
+    }
+
+    // 购买并质押
+    function buyTokenAndStake(uint256 _pid, uint minTokenAmount) public payable {
+        address[] memory path = new address[](2);
+        path[0] = wETH;
+        path[1] = myToken;
+        IUniswapV2Router01(router).swapExactETHForTokens{value : msg.value}(minTokenAmount, path, address(this), block.timestamp);
+        uint256 aTokenAmount = IERC20(myToken).balanceOf(address(this));
+
+        console.log("balance Of:", aTokenAmount);
+
+        IERC20(myToken).safeApprove(masterChef, aTokenAmount);
+        IMasterChef(masterChef).deposit(_pid, aTokenAmount);
+    }
+
+    // 提现
+    function withdraw(uint256 _pid, uint256 amount) public {
+        IMasterChef(masterChef).withdraw(_pid, amount);
     }
 }
