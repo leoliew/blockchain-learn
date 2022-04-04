@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+pragma abicoder v2;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
@@ -27,7 +28,6 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
 
     function testFlashLoan(address asset, uint amount) external {
         uint bal = IERC20(asset).balanceOf(address(this));
-
         address receiver = address(this);
         address[] memory assets = new address[](1);
         assets[0] = asset;
@@ -38,7 +38,7 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
         uint[] memory modes = new uint[](1);
         modes[0] = 0;
         address onBehalfOf = address(this);
-        bytes memory params = "";
+        bytes memory params = abi.encode(msg.sender, assets);
         // extra data to pass abi.encode(...)
         uint16 referralCode = 0;
         LENDING_POOL.flashLoan(
@@ -69,8 +69,15 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
             console.log('balance>>', bal);
             console.log('amountOwing>>', amountOwing);
             _arbitrageOnUniswap(assets[i], amounts[i]);
-            // repay to Aave
+            //3. repay to Aave
             IERC20(assets[i]).approve(address(LENDING_POOL), amountOwing);
+            //4. Transfer remaining tokens to initiator
+            uint assetBalance = IERC20(assets[i]).balanceOf(address(this));
+            console.log('afterBalance>>', assetBalance);
+            (address originAddress, address[] memory assets) = abi.decode(params, (address, address[]));
+            if (assetBalance.sub(amountOwing) > 0) {
+                IERC20(assets[i]).transfer(originAddress, assetBalance.sub(amountOwing));
+            }
         }
         return true;
     }
@@ -107,7 +114,6 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
         tokenOut : asset,
         fee : v3PoolFee,
         recipient : address(this),
-        //        recipient : msg.sender,
         deadline : block.timestamp,
         amountIn : balanceOfAToken,
         amountOutMinimum : 0,

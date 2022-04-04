@@ -17,8 +17,9 @@ async function main () {
   const busdBalance = await busdToken.balanceOf(wallet1.address)
   console.log(`闪电贷前持有BUSD: ${format(busdBalance)}`)
   // send enough token to cover fee
-  await busdToken.transfer(aaveFlashLoan.address, ethers.utils.parseUnits('1', 18))
-  await aaveFlashLoan.testFlashLoan(busdToken.address, ethers.utils.parseUnits('5', 18))
+  // console.log(wallet1.address)
+  await busdToken.connect(wallet1).transfer(aaveFlashLoan.address, ethers.utils.parseUnits('1', 18))
+  await aaveFlashLoan.connect(wallet1).testFlashLoan(busdToken.address, ethers.utils.parseUnits('5', 18))
   const afterBusdBalance = await busdToken.balanceOf(wallet1.address)
   console.log(`闪电贷后持有BUSD: ${format(afterBusdBalance)}`)
 }
