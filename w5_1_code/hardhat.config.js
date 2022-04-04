@@ -24,7 +24,7 @@ module.exports = {
       url: 'http://127.0.0.1:8545',
       chainId: 31337,
       accounts: [`0x${PRIVATE_KEY}`],
-      blockNumber: 10442791
+      blockNumber: 10446939
     },
     rinkeby: {
       chainId: 4,

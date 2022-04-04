@@ -28,4 +28,15 @@ module.exports = async (hardhat) => {
   })
   console.log('BToken:' + bToken.address)
 
+  // rinkeby 测试网地址
+  const FACTORY = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'
+  const WETH = '0xc778417E063141139Fce010982780140Aa0cD5Ab'
+  let flashSwap = await deploy('FlashSwap', {
+    contract: 'FlashSwap',
+    args: [FACTORY, WETH],
+    from: signer1.address,
+    skipIfAlreadyDeployed: false
+  })
+  console.log('FlashSwap:' + flashSwap.address)
+
 }

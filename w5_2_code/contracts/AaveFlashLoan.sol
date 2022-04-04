@@ -13,6 +13,7 @@ import "hardhat/console.sol";
 contract AaveFlashLoan is FlashLoanReceiverBase {
     using SafeMath for uint;
     // Kovan 网络的地址
+    // TODO: 优化可以传入不同网络的地址，由构造函数决定
     ISwapRouter public immutable swapRouter;
     address UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address ATOKEN = 0x8916cb563b92b9fCF5D0cf0426FAc9436a110FD7;
@@ -52,6 +53,7 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
         );
     }
 
+    // 闪电贷执行过程中调用函数
     function executeOperation(
         address[] calldata assets,
         uint[] calldata amounts,
