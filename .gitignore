@@ -114,3 +114,6 @@ dist
 typechain
 cache
 artifacts
+
+deployments/local*
+deployments/fork*
