@@ -1,2 +1,3 @@
-export ALCHEMY_URL=''
+export RINKEBY_ALCHEMY_URL=''
+export KOVAN_ALCHEMY_URL=''
 export PRIVATE_KEY=''

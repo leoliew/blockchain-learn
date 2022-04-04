@@ -7,7 +7,7 @@ require('hardhat-deploy-ethers')
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const { ALCHEMY_URL, PRIVATE_KEY } = process.env
+const { RINKEBY_ALCHEMY_URL, KOVAN_ALCHEMY_URL, PRIVATE_KEY } = process.env
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -28,7 +28,13 @@ module.exports = {
     },
     rinkeby: {
       chainId: 4,
-      url: ALCHEMY_URL
+      url: RINKEBY_ALCHEMY_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
+    },
+    kovan: {
+      chainId: 42,
+      url: KOVAN_ALCHEMY_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
     }
   }
 }

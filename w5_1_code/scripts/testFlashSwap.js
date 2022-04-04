@@ -30,6 +30,7 @@ async function main () {
     await aToken.transfer(flashSwap.address, ethers.utils.parseUnits('1', 18))
   }
 
+  // TODO:金额的部分需要重构，避免重复代码
   let borrowAmount = ethers.utils.parseUnits('0.01', 18)
   console.log('===执行闪电兑换前===')
   const beforeATokenBalance = await aToken.balanceOf(flashSwap.address)

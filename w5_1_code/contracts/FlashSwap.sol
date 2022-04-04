@@ -2,21 +2,8 @@
 pragma solidity ^0.8.0;
 pragma abicoder v2;
 
-//import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Callee.sol';
-//import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-//import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
-//import '@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol';
-//import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
 import "./interfaces/IUniSwapV2.sol";
-
-
-//import '../libraries/UniswapV2Library.sol';
-//import '../interfaces/V1/IUniswapV1Factory.sol';
-//import '../interfaces/V1/IUniswapV1Exchange.sol';
-//import '../interfaces/IUniswapV2Router01.sol';
-//import './interfaces/IERC20.sol';
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-//import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import './interfaces/IWETH.sol';
 import "hardhat/console.sol";
 
@@ -36,12 +23,10 @@ contract FlashSwap is IUniswapV2Callee {
     address WETH;
     uint256 MAX_INT = 2 ** 256 - 1;
 
-
     constructor(address _factory, address _wETH) public {
         FACTORY = _factory;
         WETH = _wETH;
     }
-
 
     event Log(string message, uint val);
 
@@ -60,7 +45,6 @@ contract FlashSwap is IUniswapV2Callee {
         IERC20(WETH).approve(pair, MAX_INT);
         IUniswapV2Pair(pair).swap(amount0Out, amount1Out, address(this), data);
     }
-
 
     // called by pair contract
     function uniswapV2Call(
