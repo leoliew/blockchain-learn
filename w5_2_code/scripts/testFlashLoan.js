@@ -36,8 +36,8 @@ async function main () {
 
 
   // send enough token to cover fee
-  await busdToken.transfer(aaveFlashLoan.address, ethers.utils.parseUnits('10', 18))
-  await aaveFlashLoan.testFlashLoan(busdToken.address, ethers.utils.parseUnits('5000', 18))
+  await busdToken.transfer(aaveFlashLoan.address, ethers.utils.parseUnits('1', 18))
+  await aaveFlashLoan.testFlashLoan(busdToken.address, ethers.utils.parseUnits('5', 18))
 
   // const tx = await testAaveFlashLoan.testFlashLoan(token.address, BORROW_AMOUNT, {
   //   from: WHALE,
