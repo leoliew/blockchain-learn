@@ -24,7 +24,7 @@ module.exports = {
       url: 'http://127.0.0.1:8545',
       chainId: 31337,
       accounts: [`0x${PRIVATE_KEY}`],
-      blockNumber: 30823089
+      blockNumber: 30834337 // kovan 测试网区块高度
     },
     kovan: {
       chainId: 42,
