@@ -14,9 +14,9 @@ module.exports = async (hardhat) => {
   const ADDRESS_PROVIDER = '0x88757f2f99175387ab4c6a4b3067c77a695b0349'
   let aaveFlashLoan = await deploy('AaveFlashLoan', {
     contract: 'AaveFlashLoan',
-    args: [ADDRESS_PROVIDER],
+    args: [ADDRESS_PROVIDER,],
     from: signer1.address,
-    skipIfAlreadyDeployed: true
+    skipIfAlreadyDeployed: false
   })
   console.log('AaveFlashLoan:' + aaveFlashLoan.address)
 }

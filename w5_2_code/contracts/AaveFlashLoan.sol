@@ -3,20 +3,27 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "./interfaces/aave/FlashLoanReceiverBase.sol";
-
 import "hardhat/console.sol";
 
 
 contract AaveFlashLoan is FlashLoanReceiverBase {
     using SafeMath for uint;
+    // Kovan 网络的地址
+    ISwapRouter public immutable swapRouter;
     address UNISWAP_V2_ROUTER = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
     address ATOKEN = 0x8916cb563b92b9fCF5D0cf0426FAc9436a110FD7;
     address WETH = 0xd0A1E359811322d97991E03f863a0C30C2cF029C;
+    address SWAP_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+    uint24 public constant v3PoolFee = 3000;
 
     event Log(string message, uint val);
 
-    constructor(ILendingPoolAddressesProvider _addressProvider) public FlashLoanReceiverBase(_addressProvider){}
+    constructor(ILendingPoolAddressesProvider _addressProvider) public FlashLoanReceiverBase(_addressProvider){
+        swapRouter = ISwapRouter(SWAP_ROUTER);
+    }
 
     function testFlashLoan(address asset, uint amount) external {
         uint bal = IERC20(asset).balanceOf(address(this));
@@ -68,6 +75,7 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
         return true;
     }
 
+
     function _arbitrageOnUniswap(address asset, uint amount) internal {
         // 1.从 uniswap v2 中使用 busd 兑换 aToken
         uint _amountOutMin = 0;
@@ -83,7 +91,40 @@ contract AaveFlashLoan is FlashLoanReceiverBase {
             address(this),
             block.timestamp
         );
-        console.log('AToken amount >>> ', IERC20(ATOKEN).balanceOf(address(this)));
+        uint balanceOfAToken = IERC20(ATOKEN).balanceOf(address(this));
+
+        console.log('after uniswap v2 , AToken amount >>> ', balanceOfAToken);
+        console.log('after uniswap v2 , BUSD amount >>> ', IERC20(asset).balanceOf(address(this)));
         // 2.从 uniswap v3 中使用 aToken 兑换 busd
+        // Approve the router to spend
+        TransferHelper.safeApprove(ATOKEN, address(swapRouter), balanceOfAToken);
+        // create params of swap
+        // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
+        // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
+        ISwapRouter.ExactInputSingleParams memory params =
+        ISwapRouter.ExactInputSingleParams({
+        tokenIn : ATOKEN,
+        tokenOut : asset,
+        fee : v3PoolFee,
+        recipient : address(this),
+        //        recipient : msg.sender,
+        deadline : block.timestamp,
+        amountIn : balanceOfAToken,
+        amountOutMinimum : 0,
+        sqrtPriceLimitX96 : 0
+        });
+
+        // The call to `exactInputSingle` executes the swap given the route.
+        console.log('=debug==');
+        console.log(ATOKEN);
+        console.log(asset);
+        console.log(v3PoolFee);
+        console.log(address(this));
+        console.log(block.timestamp);
+        console.log(balanceOfAToken);
+        console.log('===');
+        uint amountOut = swapRouter.exactInputSingle(params);
+        console.log('after uniswap v3 , AToken amount >>> ', IERC20(ATOKEN).balanceOf(address(this)));
+        console.log('after uniswap v3 , BUSD amount >>> ', IERC20(asset).balanceOf(address(this)));
     }
 }
