@@ -47,8 +47,7 @@ contract FlashSwap is IUniswapV2Callee {
         uint amountAOut = _tokenA == token0 ? _amount : 0;
         uint amountBOut = _tokenA == token1 ? _amount : 0;
         // need to pass some data to trigger uniswapV2Call
-        bytes memory data = abi.encode(_tokenA, _tokenB, _amount);
-
+        bytes memory data = abi.encode(_tokenA, _tokenB, _amount, msg.sender);
         IERC20(_tokenA).approve(pair, _amount);
         IUniswapV2Pair(pair).swap(amountAOut, amountBOut, address(this), data);
     }
@@ -65,10 +64,16 @@ contract FlashSwap is IUniswapV2Callee {
         address pair = IUniswapV2Factory(FACTORY).getPair(token0, token1);
         require(msg.sender == pair, "!pair");
         require(_sender == address(this), "!sender");
+        (address _tokenA, address _tokenB, uint amount,address initiator) = abi.decode(_data, (address, address, uint, address));
+        //1.预留还给 uniswap 部分金额
+        // about 0.3%, 还回去的时候需要带上手续费
+        uint fee = ((amount * 3) / 997) + 1;
+        uint amountToRepay = amount + fee;
+        console.log("fee", fee);
+        console.log("amount to repay", amountToRepay);
+        IERC20(_tokenA).transfer(pair, amountToRepay);
 
-        (address _tokenA, address _tokenB, uint amount) = abi.decode(_data, (address, address, uint));
-
-        //1.执行套利
+        //2.执行套利
         // do stuff here
         console.log("amount", amount);
         console.log("amount0", _amount0);
@@ -86,9 +91,6 @@ contract FlashSwap is IUniswapV2Callee {
         console.log('====');
 
         TransferHelper.safeApprove(_tokenA, address(swapRouter), balanceOfAToken);
-        //        //        // create params of swap
-        //        //        // Naively set amountOutMinimum to 0. In production, use an oracle or other data source to choose a safer value for amountOutMinimum.
-        //        //        // We also set the sqrtPriceLimitx96 to be 0 to ensure we swap our exact input amount.
         ISwapRouter.ExactInputSingleParams memory params =
         ISwapRouter.ExactInputSingleParams({
         tokenIn : _tokenA,
@@ -100,28 +102,16 @@ contract FlashSwap is IUniswapV2Callee {
         amountOutMinimum : 0,
         sqrtPriceLimitX96 : 0
         });
-//        uint amountOut = swapRouter.exactInputSingle(params);
+        uint amountOut = swapRouter.exactInputSingle(params);
         console.log('after uniswap v3 , AToken amount >>> ', IERC20(_tokenA).balanceOf(address(this)));
         console.log('after uniswap v3 , BToken amount >>> ', IERC20(_tokenB).balanceOf(address(this)));
 
-
-//        IUniswapV2Pair(pair).swap(amount0Out, amount1Out, address(this));
-//
-//        console.log('after uniswap v2 , AToken amount >>> ', IERC20(_tokenA).balanceOf(address(this)));
-//        console.log('after uniswap v2 , BToken amount >>> ', IERC20(_tokenB).balanceOf(address(this)));
-
-
-        //2.还款回合约
-        // about 0.3%, 还回去的时候需要带上手续费
-        uint fee = ((amount * 3) / 997) + 1;
-        uint amountToRepay = amount + fee;
-        console.log("fee", fee);
-        console.log("amount to repay", amountToRepay);
-        IERC20(_tokenA).transfer(pair, amountToRepay);
-
-        //3.套利盈利返回发起人
-        //        if (IERC20(_tokenA).balanceOf(address(this)) > 0) {
-        //            IERC20(_tokenA).transfer(initiator, IERC20(_tokenA).balanceOf(address(this)));
-        //        }
+        //3.套利剩余金额返回发起人
+        if (IERC20(_tokenA).balanceOf(address(this)) > 0) {
+            IERC20(_tokenA).transfer(initiator, IERC20(_tokenA).balanceOf(address(this)));
+        }
+        if (IERC20(_tokenB).balanceOf(address(this)) > 0) {
+            IERC20(_tokenB).transfer(initiator, IERC20(_tokenB).balanceOf(address(this)));
+        }
     }
 }
