@@ -79,7 +79,6 @@ contract FlashSwap is IUniswapV2Callee {
         console.log("amount0", _amount0);
         console.log("amount1", _amount1);
 
-
         uint balanceOfAToken = IERC20(_tokenA).balanceOf(address(this));
         uint balanceOfBToken = IERC20(_tokenB).balanceOf(address(this));
 
@@ -107,6 +106,7 @@ contract FlashSwap is IUniswapV2Callee {
         console.log('after uniswap v3 , BToken amount >>> ', IERC20(_tokenB).balanceOf(address(this)));
 
         //3.套利剩余金额返回发起人
+        console.log('initiator',initiator);
         if (IERC20(_tokenA).balanceOf(address(this)) > 0) {
             IERC20(_tokenA).transfer(initiator, IERC20(_tokenA).balanceOf(address(this)));
         }
