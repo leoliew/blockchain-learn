@@ -40,7 +40,7 @@ describe('CallOptionsToken', function () {
     await usdc.approve(callOptionsToken.address, toWei('1'))
     console.log(`行权前，地址持有 USDC：${format(await usdc.balanceOf(wallet1.address))}`)
     console.log(`行权前，地址持有 ETH：${format(await provider.getBalance(wallet1.address))}`)
-    console.log('=== 开始行权,以价格为 10 usdc 购买 0.1 eth ===')
+    console.log('=== 开始行权,以价格为 10 usdc/eth 购买 0.1 eth ===')
     // 时间设置在 100 天后
     await network.provider.send('evm_increaseTime', [3600 * 24 * 100])
     await network.provider.send('evm_mine')
