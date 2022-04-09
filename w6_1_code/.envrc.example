@@ -1,0 +1,4 @@
+export RINKEBY_ALCHEMY_URL=''
+export KOVAN_ALCHEMY_URL=''
+export PRIVATE_KEY=''
+export ETHERSCAN_API_KEY=''

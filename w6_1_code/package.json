@@ -1,5 +1,5 @@
 {
-  "name": "w5_2_code",
+  "name": "w6_1_code",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,8 +14,6 @@
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "@openzeppelin/contracts": "^4.5.0",
-    "@uniswap/v2-periphery": "^1.1.0-beta.0",
-    "@uniswap/v3-periphery": "^1.4.0",
     "chai": "^4.3.6",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.4",
