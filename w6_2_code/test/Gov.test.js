@@ -9,58 +9,10 @@ const format = function (amount) {
 const toUnits = function (value) {
   return ethers.utils.parseUnits(value, 18)
 }
-
-// describe('CallOptionsToken', function () {
-//
-//   let wallet1
-//   let usdc
-//   let callOptionsToken
-//
-//   beforeEach(async () => {
-//     [wallet1] = await hre.ethers.getSigners()
-//     const USDCContract = await ethers.getContractFactory('Token')
-//     usdc = await USDCContract.deploy('USDC', 'USDC', toUnits('10000'))
-//
-//     const CallOptionsTokenContract = await ethers.getContractFactory('CallOptionsToken')
-//     callOptionsToken = await CallOptionsTokenContract.deploy(usdc.address, 10)
-//   })
-//
-//   it('should mint token success', async function () {
-//     const options = { value: ethers.utils.parseEther('1.0') }
-//     await callOptionsToken.mint(options)
-//     const ethBalance = await provider.getBalance(callOptionsToken.address)
-//     expect(ethBalance).to.equal(toWei('1'))
-//     expect(await callOptionsToken.balanceOf(wallet1.address)).to.equal(toWei('1'))
-//   })
-//
-//   it.only('should settlement success', async function () {
-//     const options = { value: ethers.utils.parseEther('1.0') }
-//     await callOptionsToken.mint(options)
-//     // 授权合约可以使用 usdc
-//     await usdc.approve(callOptionsToken.address, toWei('1'))
-//     console.log(`行权前，地址持有 USDC：${format(await usdc.balanceOf(wallet1.address))}`)
-//     console.log(`行权前，地址持有 ETH：${format(await provider.getBalance(wallet1.address))}`)
-//     console.log('=== 开始行权,以价格为 10 usdc/eth 购买 0.1 eth ===')
-//     // 时间设置在 100 天后
-//     await network.provider.send('evm_increaseTime', [3600 * 24 * 100])
-//     await network.provider.send('evm_mine')
-//     await callOptionsToken.settlement(toWei('0.1'))
-//     console.log(`行权后，地址持有 USDC：${format(await usdc.balanceOf(wallet1.address))}`)
-//     console.log(`行权后，地址持有 ETH：${format(await provider.getBalance(wallet1.address))}`)
-//   })
-//
-//   it('should burnAll success', async function () {
-//     const options = { value: ethers.utils.parseEther('5.0') }
-//     await callOptionsToken.mint(options)
-//     expect(await provider.getBalance(callOptionsToken.address)).to.equal(toWei('5'))
-//     // 时间设置在 102 天后
-//     await network.provider.send('evm_increaseTime', [3600 * 24 * 102])
-//     await network.provider.send('evm_mine')
-//     await callOptionsToken.burnAll()
-//     expect(await provider.getBalance(callOptionsToken.address)).to.equal(toWei('0'))
-//   })
-//
-// })
+const encodeParameters = function (types, values) {
+  const abi = new ethers.utils.AbiCoder()
+  return abi.encode(types, values)
+}
 
 describe('Gov', function () {
 
@@ -78,25 +30,31 @@ describe('Gov', function () {
 
     const TreasuryContract = await ethers.getContractFactory('Treasury')
     treasury = await TreasuryContract.deploy()
+
     // 往金库转 1000 eth
     await wallet1.sendTransaction({ to: treasury.address, value: ethers.utils.parseEther('1000') })
-
     const GovContract = await ethers.getContractFactory('Gov')
     gov = await GovContract.deploy(daoToken.address, treasury.address)
+
+    // 修改金库的 owner 为 gov
+    await treasury.transferOwnership(gov.address)
   })
 
   it('should propose success', async function () {
-    await gov.propose(1)
+    await gov.propose(1, treasury.address, 'withdraw(address)', encodeParameters(['address'], [wallet1.address]))
     const proposal = await gov.proposals(1)
     expect(proposal.id).to.equal('1')
     expect(proposal.proposer).to.equal(wallet1.address)
     expect(proposal.approvalVotes).to.equal(0)
     expect(proposal.againstVotes).to.equal(0)
+    expect(proposal.target).to.equal(treasury.address)
+    expect(proposal.signature).to.equal('withdraw(address)')
+    expect(proposal.calldatas).to.equal(encodeParameters(['address'], [wallet1.address]))
     expect(proposal.executed).to.equal(false)
   })
 
   it('should vote success', async function () {
-    await gov.propose(1)
+    await gov.propose(1, treasury.address, 'withdraw(address)', encodeParameters(['address'], [wallet1.address]))
     await daoToken.transfer(wallet2.address, toUnits('1000'))
     await daoToken.transfer(wallet3.address, toUnits('1000'))
     // 用三个账号分别投票
@@ -108,20 +66,19 @@ describe('Gov', function () {
     expect(proposal.againstVotes.toNumber()).to.equal(1000)
   })
 
-  it.only('should execute success', async function () {
-    const ethBalance = await provider.getBalance(wallet1.address)
-    console.log(format(ethBalance))
-
-    await gov.propose(1)
+  it('should execute success', async function () {
+    console.log('=== 执行提案前 ===')
+    const beforeEthBalance = await provider.getBalance(wallet1.address)
+    console.log(`用户 ETH 余额：${format(beforeEthBalance)}`)
+    await gov.propose(1, treasury.address, 'withdraw(address)', encodeParameters(['address'], [wallet1.address]))
     await gov.vote(wallet1.address, 1, true)
-    await gov.execute(1,wallet1.address)
-
+    await gov.execute(1, wallet1.address)
     const proposal = await gov.proposals(1)
-    const ethBalance1 = await provider.getBalance(wallet1.address)
-    console.log(format(ethBalance1))
-
+    const contractETHBalance = await provider.getBalance(treasury.address)
+    console.log('=== 执行提案，转移金库的 ETH ===')
+    const afterEthBalance = await provider.getBalance(wallet1.address)
+    console.log(`用户 ETH 余额：${format(afterEthBalance)}`)
     expect(proposal.executed).to.equal(true)
-
+    expect(contractETHBalance).to.equal(toWei('0'))
   })
-
 })

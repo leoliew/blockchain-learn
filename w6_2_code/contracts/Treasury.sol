@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Treasury {
+contract Treasury is Ownable {
 
     event Received(address, uint);
 
@@ -12,8 +13,7 @@ contract Treasury {
     }
 
     // 提现当前合约所有的 eth
-    // TODO: 修改成只有 owner 才能执行
-    function withdraw(address to) external {
+    function withdraw(address to) external onlyOwner {
         uint256 amount = address(this).balance;
         safeTransferETH(to, amount);
     }

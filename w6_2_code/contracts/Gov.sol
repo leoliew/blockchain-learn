@@ -34,8 +34,9 @@ contract Gov {
         address proposer; // 提案人
         uint256 approvalVotes; // 当前支持票数
         uint256 againstVotes; // 当前反对票数
-//        address targets;
-//        bytes[] calldatas;
+        address target;
+        string signature;
+        bytes calldatas;
         bool executed;
     }
 
@@ -51,14 +52,16 @@ contract Gov {
     }
 
     // 提案
-    function propose(uint256 proposalId) external {
+    function propose(uint256 proposalId, address target, string memory signature, bytes memory calldatas) external {
         Proposal memory newProposal = Proposal({
         id : proposalId,
         proposer : msg.sender,
         approvalVotes : 0,
         againstVotes : 0,
+        target : target,
+        signature : signature,
+        calldatas : calldatas,
         executed : false
-
         });
         proposals[newProposal.id] = newProposal;
     }
@@ -71,7 +74,7 @@ contract Gov {
     ) public {
         Proposal storage proposal = proposals[proposalId];
         Voter storage sender = voters[voter];
-        require(!sender.hasVoted, "Already voted.");
+        require(!sender.hasVoted, "already voted.");
         uint256 balance = Token(daoToken).balanceOf(msg.sender);
         require(balance >= proposalThreshold, "proposer votes below proposal threshold");
         uint256 votes = SafeMath.div(balance, proposalThreshold);
@@ -86,13 +89,21 @@ contract Gov {
     }
 
     // 执行提案
-    function execute(uint256 proposalId, address to) external {
-        console.log("approvalVotes: ", proposals[proposalId].approvalVotes);
+    function execute(uint256 proposalId, address to) external returns (bytes memory) {
         require(proposals[proposalId].approvalVotes >= succeededVotes, "cannot executed proposal");
-        //        require(block.timestamp >= endDelayPeriod, "invalid time");
-        // TODO: 暂时定为任何一个提案都可以提取资金, 需要改成读取 proposal 并执行
-//        address payable treasuryAddress = address(uint160(treasury));
-        Treasury(payable(treasury)).withdraw(to);
+        require(!proposals[proposalId].executed, "already executed proposal");
+        address target = proposals[proposalId].target;
+        bytes memory data = proposals[proposalId].calldatas;
+        string  memory signature = proposals[proposalId].signature;
+        // 封装函数调用，调用到所提案的合约
+        bytes memory callData;
+        if (bytes(signature).length == 0) {
+            callData = data;
+        } else {
+            callData = abi.encodePacked(bytes4(keccak256(bytes(signature))), data);
+        }
+        (bool success, bytes memory returnData) = target.call(callData);
         proposals[proposalId].executed = true;
+        return returnData;
     }
 }
