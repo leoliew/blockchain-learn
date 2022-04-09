@@ -1,6 +1,6 @@
 ## 相关代码
-- [CallOptionsToken](https://github.com/leoliew/blockchain-learn/blob/main/w5_2_code/contracts/AaveFlashLoan.sol)
-- [CallOptionsToken.test](https://github.com/leoliew/blockchain-learn/blob/main/w5_2_code/scripts/testFlashLoan.js)
+- [CallOptionsToken](https://github.com/leoliew/blockchain-learn/blob/main/w6_1_code/contracts/CallOptionsToken.sol)
+- [CallOptionsToken.test](https://github.com/leoliew/blockchain-learn/blob/main/w6_1_code/test/CallOptionsToken.test.js)
 
 ## 截图
 - 单元测试执行情况
