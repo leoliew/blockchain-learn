@@ -24,10 +24,10 @@ contract Gov {
         address proposer; // 提案人
         uint256 approvalVotes; // 当前支持票数
         uint256 againstVotes; // 当前反对票数
-        address target;
-        string signature;
-        bytes calldatas;
-        bool executed;
+        address target; // 执行的目标合约
+        string signature; // 执行的目标合约方法
+        bytes calldatas; // 执行的目标合约参数
+        bool executed; // 提案是否被执行
     }
 
     mapping(uint256 => Proposal) public proposals;
