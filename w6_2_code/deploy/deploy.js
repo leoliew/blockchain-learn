@@ -6,25 +6,32 @@ const { ethers } = require('hardhat')
 // Runtime Environment's members available in the global scope.
 module.exports = async (hardhat) => {
 
-  // const { deployments } = hardhat
-  // const { deploy } = deployments
-  //
-  // const [signer1] = await hardhat.ethers.getSigners()
-  //
-  // let usdcInitialSupply = ethers.utils.parseUnits('10000', 18)
-  // let usdcToken = await deploy('USDC', {
-  //   contract: 'Token',
-  //   args: ['USDC', 'USDC', usdcInitialSupply],
-  //   from: signer1.address,
-  //   skipIfAlreadyDeployed: false
-  // })
-  // console.log('USDC:' + usdcToken.address)
-  //
-  // let callOptionsToken = await deploy('CallOptionsToken', {
-  //   contract: 'CallOptionsToken',
-  //   args: [usdcToken.address, 10],
-  //   from: signer1.address,
-  //   skipIfAlreadyDeployed: false
-  // })
-  // console.log('CallOptionsToken:' + callOptionsToken.address)
+  const { deployments } = hardhat
+  const { deploy } = deployments
+
+  const [wallet1] = await ethers.getSigners()
+
+  const daoToken = await deploy('Token', {
+    from: wallet1.address,
+    skipIfAlreadyDeployed: false
+  })
+  console.log('DAOToken:' + daoToken.address)
+
+  const treasury = await deploy('Treasury', {
+    from: wallet1.address,
+    skipIfAlreadyDeployed: false
+  })
+  console.log('Treasury:' + treasury.address)
+
+  const gov = await deploy('Gov', {
+    contract: 'Gov',
+    args: [daoToken.address, treasury.address],
+    from: wallet1.address,
+    skipIfAlreadyDeployed: false
+  })
+  console.log('Gov:' + gov.address)
+
+  // 修改金库的 owner 为 gov
+  const treasuryContract = await ethers.getContractAt('Treasury', treasury.address)
+  await treasuryContract.transferOwnership(gov.address)
 }
