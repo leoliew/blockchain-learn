@@ -12,20 +12,10 @@ contract Gov {
     address public daoToken;
     uint256 proposalThreshold = 1e18; // 最小投票 token 数
     uint256 succeededVotes = 1000; // 超过 1/10 投票即为成功通过
-    //    uint256 failed = 10;
-    //    bool active = false;
-    //    uint256 startDelayPeriod = 0;
-    //    uint256 endDelayPeriod = startDelayPeriod + 3 days;
-    /// @notice The total number of proposals
-    //    uint256 public proposalCount;
-    //    bool unlock = false;
 
     struct Voter {
-        /// @notice Whether or not a vote has been cast
         bool hasVoted;
-        /// @notice Whether or not the voter supports the proposal
         bool support;
-        /// @notice The number of votes the voter had, which were cast
         uint256 votes;
     }
 
