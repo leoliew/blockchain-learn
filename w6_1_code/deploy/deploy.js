@@ -10,13 +10,21 @@ module.exports = async (hardhat) => {
   const { deploy } = deployments
 
   const [signer1] = await hardhat.ethers.getSigners()
-  // kovan测试网地址
-  const ADDRESS_PROVIDER = '0x88757f2f99175387ab4c6a4b3067c77a695b0349'
-  let aaveFlashLoan = await deploy('AaveFlashLoan', {
-    contract: 'AaveFlashLoan',
-    args: [ADDRESS_PROVIDER],
+
+  let usdcInitialSupply = ethers.utils.parseUnits('10000', 18)
+  let usdcToken = await deploy('USDC', {
+    contract: 'Token',
+    args: ['USDC', 'USDC', usdcInitialSupply],
     from: signer1.address,
     skipIfAlreadyDeployed: false
   })
-  console.log('AaveFlashLoan:' + aaveFlashLoan.address)
+  console.log('USDC:' + usdcToken.address)
+
+  let callOptionsToken = await deploy('CallOptionsToken', {
+    contract: 'CallOptionsToken',
+    args: [usdcToken.address, 10],
+    from: signer1.address,
+    skipIfAlreadyDeployed: false
+  })
+  console.log('CallOptionsToken:' + callOptionsToken.address)
 }
